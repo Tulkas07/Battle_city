@@ -17,6 +17,9 @@ class GSprite(sprite.Sprite):
         self.speed = entity_speed
         self.rect.x = entity_pos_x
         self.rect.y = entity_pos_y
+
+    def reset(self):
+        window.blit(self.image, (self.rect.x, self.rect.y))
         
 
 class Player(GSprite):
@@ -88,7 +91,33 @@ class Enemy(GSprite):
 window = display.set_mode((800, 600))
 display.set_caption("Круті танчики")
 background = transform.scale(image.load("background.png"), (800, 600))
-tank_player = Player(img_player, 0, 0, 50, 3)
+tank_player = Player(img_player, 50, 50, 50, 3)
+
+level = [
+    "0000000000000000",
+    "0      0       0",
+    "0 0000 0 0000  0",
+    "0 0    0    0  0",
+    "0 0 0000000 0  0",
+    "0 0       0 0  0",
+    "0 000 000 0 0  0",
+    "0    0   0   0 0",
+    "0 0000 0 0000  0",
+    "0      0       0",
+    "0  0000000000  0",
+    "0000000000000000"]
+
+walls = sprite.Group()
+x = 0
+y = 0
+for ent in level:
+    x = 0
+    for e in ent:
+        if e == "0":
+            wall = GSprite(img_wall, x, y, 50, 0)
+            walls.add(wall)
+        x += 50
+    y += 50
 
 game = True
 clock = time.Clock()
@@ -102,6 +131,9 @@ while game:
     window.blit(background, (0,0) )
     window.blit(tank_player.image, tank_player.rect)
     tank_player.movement()
+
+    for wall in walls:
+        wall.reset()
 
     display.update()
     clock.tick(FPS)
