@@ -4,6 +4,8 @@ from pygame import *
 pygame.init()
 
 img_player = "player_tank_sprite.png"
+img_enemy = "enemy_tank_sprite.png"
+img_wall = "wall_sprite.png"
 
 
 
