@@ -29,6 +29,9 @@ class Player(GSprite):
 
     
     def movement(self):
+        self.old_x = self.rect.x
+        self.old_y = self.rect.y
+
         keys = pygame.key.get_pressed()
         if keys[K_LEFT]:
             self.rect.x -= self.speed
@@ -78,8 +81,22 @@ class Player(GSprite):
                 self.image = pygame.transform.rotate(self.image, 180)
                 self.direction = "UP"
                 
-    def collision(self):
-        pass
+    def collision(self, walls):
+        for wall in walls:
+            if self.rect.colliderect(wall.rect):
+                self.rect.x = self.old_x
+                self.rect.y = self.old_y 
+                     
+                if self.direction == "LEFT":
+                    self.rect.x += self.speed
+                elif self.direction == "RIGHT":
+                    self.rect.x -= self.speed
+                
+                elif self.direction == "UP":
+                    self.rect.y += self.speed
+                elif self.direction == "DOWN":
+                    self.rect.y -= self.speed
+
         
 
 
@@ -91,7 +108,7 @@ class Enemy(GSprite):
 window = display.set_mode((800, 600))
 display.set_caption("Круті танчики")
 background = transform.scale(image.load("background.png"), (800, 600))
-tank_player = Player(img_player, 50, 50, 50, 3)
+tank_player = Player(img_player, 50, 50, 45, 3)
 
 level = [
     "0000000000000000",
@@ -131,6 +148,7 @@ while game:
     window.blit(background, (0,0) )
     window.blit(tank_player.image, tank_player.rect)
     tank_player.movement()
+    tank_player.collision(walls)
 
     for wall in walls:
         wall.reset()
