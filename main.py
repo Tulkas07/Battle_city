@@ -110,13 +110,11 @@ class Player(GSprite):
             player_bullet_group.add(bullet)
 
             self.last_shot_time = timer   
+
 class PlayerBullet(GSprite):
     def __init__(self, entity_img, entity_pos_x, entity_pos_y, entity_size,  entity_speed, direction):
         super().__init__(entity_img, entity_pos_x, entity_pos_y, entity_size, entity_speed)
         self.direction = direction
-
-    
-    
         
         if self.direction == "UP":
             self.image = pygame.transform.rotate(self.image, 90)
@@ -127,6 +125,7 @@ class PlayerBullet(GSprite):
         
 
         self.rect = self.image.get_rect(center=(entity_pos_x, entity_pos_y))
+
     def update(self):
         if self.direction == "UP":
             self.rect.y -= self.speed
@@ -136,6 +135,9 @@ class PlayerBullet(GSprite):
             self.rect.x -= self.speed
         elif self.direction == "RIGHT":
             self.rect.x += self.speed
+
+        if pygame.sprite.spritecollide(self, walls, False):
+            self.kill()
 
 class Enemy(GSprite):
     pass
