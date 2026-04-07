@@ -9,7 +9,6 @@ img_player = "player_tank_sprite.png"
 img_enemy = "enemy_tank_sprite.png"
 img_wall = "wall_sprite.png"
 img_bullet = "bullet.png"
-lose = False
 
 class GSprite(sprite.Sprite):
     def __init__(self, entity_img, entity_pos_x, entity_pos_y, entity_size, entity_speed):
