@@ -116,6 +116,7 @@ class PlayerBullet(GSprite):
     def __init__(self, entity_img, entity_pos_x, entity_pos_y, entity_size,  entity_speed, direction):
         super().__init__(entity_img, entity_pos_x, entity_pos_y, entity_size, entity_speed)
         self.direction = direction
+        self.kill_count = 0
         
         if self.direction == "UP":
             self.image = pygame.transform.rotate(self.image, 90)
@@ -142,6 +143,8 @@ class PlayerBullet(GSprite):
 
         hit_enemies = pygame.sprite.spritecollide(self, enemys_group, True)
         if hit_enemies:
+            global kill_count
+            kill_count += len(hit_enemies)
             self.kill()
 
 
@@ -174,8 +177,10 @@ class EnemyBullet(GSprite):
 
         hit_player = pygame.sprite.spritecollide(self, player_group, True)
         if hit_player:
+            global game_over
+            game_over = True
             self.kill()
-            
+                    
 
 
 class Enemy(GSprite):
@@ -211,6 +216,15 @@ class Enemy(GSprite):
 
             bullet = EnemyBullet(img_bullet, self.rect.centerx, self.rect.centery, 15, 5, self.direction)
             enemys_bullet_group.add(bullet)
+
+
+def draw_text(text, size, color, x, y):
+    font.init()
+    font_style = font.Font(None, size)
+    text_surface = font_style.render(text, True, color)
+    rect = text_surface.get_rect(center=(x, y))
+    window.blit(text_surface, rect)
+
 
 
 window = display.set_mode((800, 600))
@@ -259,11 +273,72 @@ for ent in level:
 game = True
 clock = time.Clock()
 FPS = 60
+kill_count = 0
+game_over = False
+
+def menu():
+    menu_run = True
+
+    while menu_run:
+        window.blit(background, (0, 0))
+
+        mouse_pos = pygame.mouse.get_pos()
+        mouse_click = pygame.mouse.get_pressed()
+
+        draw_text("КРУТІ ТАНЧИКИ", 64, (255, 255, 255), 400, 150)
+
+        font_play = font.Font(None, 45)
+        play_text = font_play.render("У БІЙ", True, (255, 255, 255))
+        play_rect = play_text.get_rect(center=(400, 280))
+
+        if play_rect.collidepoint(mouse_pos):
+            play_text = font_play.render("У БІЙ", True, (200, 200, 200))
+            if mouse_click[0]:
+                return True
+        window.blit(play_text, play_rect)
+
+        font_exit = font.Font(None, 45)
+        exit_text = font_exit.render("ПОКИНУТИ ГРУ", True, (255, 255, 255))
+        exit_rect = exit_text.get_rect(center=(400, 360))
+
+        if exit_rect.collidepoint(mouse_pos):
+            exit_text = font_exit.render("ПОКИНУТИ ГРУ", True, (200, 200, 200))
+            if mouse_click[0]:
+                pygame.quit()
+                exit()
+        window.blit(exit_text, exit_rect)
+
+        for e in event.get():
+            if e.type == QUIT:
+                pygame.quit()
+                exit()
+
+        display.update()
+        clock.tick(60)
+
+if menu():
+    game = True
+else:
+    game = False
 
 while game:    
     for e in event.get():
         if e.type == QUIT:
             game = False
+
+    if kill_count >= 3:
+        draw_text("ВИ ПЕРЕМОГЛИ", 80, (255, 255, 255), 400, 300)
+        display.update()
+        pygame.time.delay(3000)
+        game = False
+        menu()
+
+    if game_over:
+        draw_text("МАШИНА ЗНИЩЕНА", 80, (255, 255, 255), 400, 300)
+        display.update()
+        pygame.time.delay(3000)
+        game = False
+        menu()
 
     window.blit(background, (0,0) )
     window.blit(tank_player.image, tank_player.rect)
@@ -301,7 +376,6 @@ while game:
 
     for wall in walls:
         wall.reset()
-
    
 
     display.update()
