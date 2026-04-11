@@ -87,18 +87,16 @@ class Player(GSprite):
     def collision(self, walls):
         for wall in walls:
             if self.rect.colliderect(wall.rect):
-                self.rect.x = self.old_x
-                self.rect.y = self.old_y 
                      
                 if self.direction == "LEFT":
-                    self.rect.x += self.speed
+                    self.rect.x += 0
                 elif self.direction == "RIGHT":
-                    self.rect.x -= self.speed
+                    self.rect.x -= 0
                 
                 elif self.direction == "UP":
-                    self.rect.y += self.speed
+                    self.rect.y += 0
                 elif self.direction == "DOWN":
-                    self.rect.y -= self.speed
+                    self.rect.y -= 0
 
     def shoot(self):
         keys = pygame.key.get_pressed()
